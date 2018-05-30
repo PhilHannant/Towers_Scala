@@ -1,5 +1,5 @@
 package Model
 
-case class Results(transmitters: List[Transmitter]){
+case class Result(transmitters: List[Transmitter]){
   def getTotalPower(): Int = ???
 }
