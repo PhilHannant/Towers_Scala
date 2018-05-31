@@ -5,5 +5,5 @@ sealed trait Tower {
   val location: Point
 }
 
-case class Transmitter(id: Int, location: Point) extends Tower
+case class Transmitter(id: Int, location: Point, power: Int) extends Tower
 case class Receiver(id: Int, location: Point) extends Tower
