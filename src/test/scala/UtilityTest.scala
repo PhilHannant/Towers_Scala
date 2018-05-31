@@ -1,4 +1,4 @@
-import Model.Point
+import Model.{Point, Receiver, Transmitter}
 import optimisers.Optimiser
 
 import collection.mutable.Stack
@@ -14,4 +14,7 @@ class UtilityTest extends FlatSpec with Matchers {
     powerOptimiser.calculateChebysev(Point(2, 4), Point(0, 6)) should be (2)
   }
 
+  "outOfRangeCheck" should "take a transmitter and a receiver and return a boolean" in {
+    powerOptimiser.outOfRangeCheck(Transmitter(1, Point(1, 0), 1), Receiver(1, Point(2, 3))) should be (true)
+  }
 }
