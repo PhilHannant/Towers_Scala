@@ -15,6 +15,13 @@ class UtilityTest extends FlatSpec with Matchers {
   }
 
   "outOfRangeCheck" should "take a transmitter and a receiver and return a boolean" in {
-    powerOptimiser.outOfRangeCheck(Transmitter(1, Point(1, 0), 1), Receiver(1, Point(2, 3))) should be (true)
+    powerOptimiser.outOfRangeCheck(Transmitter(1, Point(1, 0), 1), Receiver(1, Point(2, 3)))should be
+    true
+  }
+
+  "outOfRangeReceivers" should "take a list of transmitters and receivers and return a list of receviers" in {
+    powerOptimiser.getOutOfRangeReceivers(testScenarios.testScenarios(6).scenario.transmitters,
+      testScenarios.testScenarios(6).scenario.receivers) should be
+    List(Receiver(1, Point(1,2)), Receiver(2, Point(5,2)))
   }
 }
