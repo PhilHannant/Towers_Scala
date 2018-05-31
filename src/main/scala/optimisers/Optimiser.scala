@@ -17,10 +17,10 @@ class Optimiser extends PowerOptimiser {
     Math.abs(calculateChebyshev(t.location, r.location) - t.power)
   }
 
+  def checkReceiver(transmitters: List[Transmitter], r: Receiver) = ???
+
   def getOutOfRangeReceivers(transmitters: List[Transmitter], receivers: List[Receiver]): List[Receiver] = {
-    match receivers{
-      case x :: xs => ???
-      case Nil => receivers
+      receivers.filter(r => checkReceiver(transmitters, r))
     }
-  }
+
 }
