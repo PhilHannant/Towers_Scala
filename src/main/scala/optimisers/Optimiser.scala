@@ -32,9 +32,15 @@ class Optimiser extends PowerOptimiser {
       receivers.filter(r => checkReceiver(transmitters, r))
   }
 
-  def getClosestTransmiters(scenario: Scenario): Transmitter = {
+  def getClosetTransmiters(scenario: Scenario): List[Transmitter] = {
     val receivers = getOutOfRangeReceivers(scenario.transmitters, scenario.receivers)
-    ???
+
+    def updateTransmittersHelper(t: List[Transmitter], r: List[Receiver], updated: List[Transmitter]): List[Transmitter] =
+      r match {
+        case x :: xs => updateTransmittersHelper(t, xs, updated ::: List(getClosestTransmitter(t, x)))
+        case Nil => updated
+      }
+    updateTransmittersHelper(scenario.transmitters, scenario.receivers, Nil)
   }
 
   def getClosestTransmitter(transmitters: List[Transmitter], receiver: Receiver) = {
