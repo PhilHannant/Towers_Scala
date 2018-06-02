@@ -24,4 +24,10 @@ class UtilityTest extends FlatSpec with Matchers {
       testScenarios.testScenarios(6).scenario.receivers) should be
     List(Receiver(1, Point(1,2)), Receiver(2, Point(5,2)))
   }
+
+  "getClosestTransmitters" should "take a scenario and return a list of Transmitters" in {
+    powerOptimiser.getClosetTransmiters(testScenarios.testScenarios(6).scenario) should be
+    List(Transmitter(2,  Point(1, 0), 1),
+        Transmitter(3,  Point(5, 0), 1))
+  }
 }
