@@ -38,8 +38,9 @@ class Optimiser extends PowerOptimiser {
     def updateTransmittersHelper(t: List[Transmitter], r: List[Receiver], updated: List[Transmitter]): List[Transmitter] =
       r match {
         case x :: xs => updateTransmittersHelper(t, xs, updated ::: List(getClosestTransmitter(t, x)))
-        case Nil => updated
+        case Nil => println(updated); updated
       }
+
     updateTransmittersHelper(scenario.transmitters, scenario.receivers, Nil)
   }
 
@@ -50,12 +51,27 @@ class Optimiser extends PowerOptimiser {
         if (distanceToRange(x, r) < distanceToRange(closest, r))
         closestTransmitterHelper(xs, r, x)
         else closestTransmitterHelper(xs, r, closest)
-      case Nil => closest
+      case Nil => Transmitter(closest.id, closest.location, closest.power + distanceToRange(closest, r))
     }
 
     closestTransmitterHelper(transmitters, receiver, transmitters(0))
-
   }
 
+  def findGreatestDistanceToRange(transmitters: List[Transmitter], outOfRange: List[Receiver]): Transmitter = {
+    def findGreatestDistanceToRangeHelper(t: List[Transmitter], r: List[Receiver], greatest: Transmitter): Transmitter =
+      t match {
+        case x :: xs => if(findMaxDistance(x, r) < findMaxDistance(greatest, r)) {
+          findGreatestDistanceToRangeHelper(xs, r, x)
+        } else {
+          findGreatestDistanceToRangeHelper(xs, r, greatest)
+        }
+        case Nil => Transmitter(greatest.id, greatest.location, greatest.power )
+      }
+    findGreatestDistanceToRangeHelper(transmitters, outOfRange, transmitters(0))
+  }
+
+  def findMaxDistance(t: Transmitter, r: List[Receiver]) = {
+    r.map(r => distanceToRange(t, r)).max
+  }
 
 }
