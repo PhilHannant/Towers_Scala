@@ -21,13 +21,13 @@ class UtilityTest extends FlatSpec with Matchers {
 
   "outOfRangeReceivers" should "take a list of transmitters and receivers and return a list of receviers" in {
     powerOptimiser.getOutOfRangeReceivers(testScenarios.testScenarios(6).scenario.transmitters,
-      testScenarios.testScenarios(6).scenario.receivers) should be
+      testScenarios.testScenarios(6).scenario.receivers) should contain theSameElementsAs
     List(Receiver(1, Point(1,2)), Receiver(2, Point(5,2)))
   }
 
   "getClosestTransmitters" should "take a scenario and return a list of Transmitters" in {
-    powerOptimiser.getClosetTransmiters(testScenarios.testScenarios(6).scenario) should be
-    List(Transmitter(2,  Point(1, 0), 1),
-        Transmitter(3,  Point(5, 0), 1))
+    powerOptimiser.getClosetTransmiters(testScenarios.testScenarios(6).scenario) should contain theSameElementsAs
+    List(Transmitter(2,  Point(1, 0), 2),
+        Transmitter(3,  Point(5, 0), 2))
   }
 }
