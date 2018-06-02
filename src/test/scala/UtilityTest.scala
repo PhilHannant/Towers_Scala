@@ -30,4 +30,11 @@ class UtilityTest extends FlatSpec with Matchers {
     List(Transmitter(2,  Point(1, 0), 2),
         Transmitter(3,  Point(5, 0), 2))
   }
+
+  "findMaxDistance" should "take a list of transmitters and a receiver and return an int" in {
+    powerOptimiser.findMaxDistance(Transmitter(3,  Point(22, 21), 3),
+      powerOptimiser.getOutOfRangeReceivers(
+        testScenarios.testScenarios(4).scenario.transmitters,
+        testScenarios.testScenarios(4).scenario.receivers)) should be (19)
+  }
 }
