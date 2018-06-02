@@ -65,7 +65,7 @@ class Optimiser extends PowerOptimiser {
         } else {
           findGreatestDistanceToRangeHelper(xs, r, greatest)
         }
-        case Nil => Transmitter(greatest.id, greatest.location, greatest.power )
+        case Nil => Transmitter(greatest.id, greatest.location, greatest.power + findMaxDistance(greatest, r))
       }
     findGreatestDistanceToRangeHelper(transmitters, outOfRange, transmitters(0))
   }

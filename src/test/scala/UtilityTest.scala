@@ -37,4 +37,9 @@ class UtilityTest extends FlatSpec with Matchers {
         testScenarios.testScenarios(4).scenario.transmitters,
         testScenarios.testScenarios(4).scenario.receivers)) should be (19)
   }
+
+  "findGreatestDistanceToRange" should "take a list of transmitters and receivers and return a Transmitter" in {
+    powerOptimiser.findGreatestDistanceToRange(testScenarios.testScenarios(4).scenario.transmitters,
+      testScenarios.testScenarios(4).scenario.receivers) should be (Transmitter(6,  Point(16, 19), 20))
+  }
 }
