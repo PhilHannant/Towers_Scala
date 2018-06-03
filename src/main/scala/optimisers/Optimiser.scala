@@ -8,18 +8,38 @@ class Optimiser extends PowerOptimiser {
       List(getClosetTransmiters(scenario))::: List(List(findGreatestDistanceToRange(scenario.transmitters,
         getOutOfRangeReceivers(scenario.transmitters, scenario.receivers))))
     println(hypothesis)
-    Result(getMostEffcient(hypothesis, Nil))
+    Result(buildFinalList(scenario.transmitters, getMostEffcient(hypothesis, hypothesis(0))))
   }
+
+//  def buildFinalList(transmitters: List[Transmitter], updated: List[Transmitter]): List[Transmitter] = {
+//    def buildFinalListHelper(transmitters: List[Transmitter], updated: List[Transmitter], finalList: List[Transmitter]): List[Transmitter] =
+//      transmitters match {
+//        case Nil => finalList
+//        case x :: xs =>
+//          if (updated.contains(x.id)) {
+//            buildFinalListHelper(xs, updated, finalList)
+//          }
+//      }
+//  }
+
+  def buildFinalList(t: List[Transmitter], updated: List[Transmitter], result: List[Transmitter]): List[Transmitter] =
+    t match {
+      case Nil => result
+      case x :: xs =>
+        if(){
+          buildFinalList(xs, updated, result)
+        }
+    }
 
   def getMostEffcient(hypotheses: List[List[Transmitter]], result: List[Transmitter]): List[Transmitter] =
     hypotheses match {
+      case Nil => result
       case x :: xs =>
-        if(x.map(_.power).sum > result.map(_.power).sum){
+        if(x.map(_.power).sum < result.map(_.power).sum){
         getMostEffcient(xs, x)
       } else {
           getMostEffcient(xs, result)
-        }
-      case Nil => result
+      }
   }
 
   def calculateChebyshev(p1: Point, p2: Point): Int = {
