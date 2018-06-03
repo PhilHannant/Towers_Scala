@@ -3,7 +3,24 @@ import Model._
 
 class Optimiser extends PowerOptimiser {
 
-  override def optimise(scenario: Scenario): Result = ???
+  override def optimise(scenario: Scenario): Result = {
+    val hypothesis: List[List[Transmitter]] =
+      List(getClosetTransmiters(scenario))::: List(List(findGreatestDistanceToRange(scenario.transmitters,
+        getOutOfRangeReceivers(scenario.transmitters, scenario.receivers))))
+    println(hypothesis)
+    Result(getMostEffcient(hypothesis, Nil))
+  }
+
+  def getMostEffcient(hypotheses: List[List[Transmitter]], result: List[Transmitter]): List[Transmitter] =
+    hypotheses match {
+      case x :: xs =>
+        if(x.map(_.power).sum > result.map(_.power).sum){
+        getMostEffcient(xs, x)
+      } else {
+          getMostEffcient(xs, result)
+        }
+      case Nil => result
+  }
 
   def calculateChebyshev(p1: Point, p2: Point): Int = {
     Math.max(Math.abs(p1.x - p2.x), Math.abs(p1.y - p2.y))
@@ -38,7 +55,7 @@ class Optimiser extends PowerOptimiser {
     def updateTransmittersHelper(t: List[Transmitter], r: List[Receiver], updated: List[Transmitter]): List[Transmitter] =
       r match {
         case x :: xs => updateTransmittersHelper(t, xs, updated ::: List(getClosestTransmitter(t, x)))
-        case Nil => println(updated); updated
+        case Nil => updated
       }
 
     updateTransmittersHelper(scenario.transmitters, scenario.receivers, Nil)
