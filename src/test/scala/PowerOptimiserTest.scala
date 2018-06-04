@@ -12,7 +12,7 @@ class PowerOptimiserTest extends FlatSpec with Matchers {
   "optimise" should "return Result containing a list of Transmitters0" in {
     powerOptimiser.optimise(testScenarios.testScenarios(0).scenario) should be (testScenarios.testScenarios(0).expectedResult)
   }
-1
+
   "optimise" should "return Result containing a list of Transmitters1" in {
     powerOptimiser.optimise(testScenarios.testScenarios(1).scenario) should be (testScenarios.testScenarios(1).expectedResult)
   }

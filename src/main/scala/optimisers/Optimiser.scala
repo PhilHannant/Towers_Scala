@@ -5,40 +5,43 @@ class Optimiser extends PowerOptimiser {
 
   override def optimise(scenario: Scenario): Result = {
     val hypothesis: List[List[Transmitter]] =
-      List(getClosetTransmiters(scenario))::: List(List(findGreatestDistanceToRange(scenario.transmitters,
+      List(getClosetTransmiters(scenario))::: List(List(findCheapestDistanceToRange(scenario.transmitters,
         getOutOfRangeReceivers(scenario.transmitters, scenario.receivers))))
-    println(hypothesis)
-    Result(scenario.transmitters)
+    Result(buildFinalList(scenario.transmitters, getMostEffcient(hypothesis, hypothesis(0))))
   }
 
   def buildFinalList(transmitters: List[Transmitter], updated: List[Transmitter]): List[Transmitter] = {
-
-    def buildFinalListHelper1(t: List[Transmitter], u: List[Transmitter], greatest: List[Transmitter]): List[Transmitter] =
+    def buildFinalListHelper(t: List[Transmitter], u: List[Transmitter], greatest: List[Transmitter]): List[Transmitter] =
       t match {
         case x :: xs => if(u.map(_.id).contains(x.id)) {
-          buildFinalListHelper1(xs, u, x :: greatest)
+          buildFinalListHelper(xs, u, greatest ::: List(getListItem(x.id, u, null)))
         } else {
-          buildFinalListHelper1(xs, u, greatest)
+          buildFinalListHelper(xs, u, greatest ::: List(x))
         }
         case Nil => greatest
       }
-    buildFinalListHelper1(transmitters, updated, transmitters)
+    buildFinalListHelper(transmitters, updated, Nil)
   }
 
 
-
-
-  def getListItem(t: Transmitter, u: List[Transmitter]): List[Transmitter] = ???
+  def getListItem(id: Int, u: List[Transmitter], item: Transmitter): Transmitter = u match {
+    case x :: xs => if(x.id == id) {
+      getListItem(id, Nil, x)
+    } else {
+      getListItem(id, xs, item)
+    }
+    case Nil => item
+  }
 
   def getMostEffcient(hypotheses: List[List[Transmitter]], result: List[Transmitter]): List[Transmitter] =
     hypotheses match {
-      case Nil => result
       case x :: xs =>
         if(x.map(_.power).sum < result.map(_.power).sum){
-        getMostEffcient(xs, x)
+          getMostEffcient(xs, x)
       } else {
           getMostEffcient(xs, result)
       }
+      case Nil => result
   }
 
   def calculateChebyshev(p1: Point, p2: Point): Int = {
@@ -53,15 +56,8 @@ class Optimiser extends PowerOptimiser {
     Math.abs(calculateChebyshev(t.location, r.location) - t.power)
   }
 
-  def checkReceiver(transmitters: List[Transmitter], r: Receiver): Boolean =
-    transmitters match {
-      case x :: xs =>
-        if(!outOfRangeCheck(x, r)){
-          checkReceiver(xs, r)
-        } else {
-          true
-        }
-      case Nil => false
+  def checkReceiver(transmitters: List[Transmitter], r: Receiver): Boolean = {
+    transmitters.forall(t => outOfRangeCheck(t, r))
   }
 
   def getOutOfRangeReceivers(transmitters: List[Transmitter], receivers: List[Receiver]): List[Receiver] = {
@@ -93,33 +89,25 @@ class Optimiser extends PowerOptimiser {
     closestTransmitterHelper(transmitters, receiver, transmitters(0))
   }
 
-  def findGreatestDistanceToRange(transmitters: List[Transmitter], outOfRange: List[Receiver]): Transmitter = {
-    def findGreatestDistanceToRangeHelper(t: List[Transmitter], r: List[Receiver], greatest: Transmitter): Transmitter =
+  def findCheapestDistanceToRange(transmitters: List[Transmitter], outOfRange: List[Receiver]): Transmitter = {
+    def findCheapestDistanceToRangeHelper(t: List[Transmitter], r: List[Receiver], greatest: Transmitter): Transmitter =
       t match {
-        case x :: xs => if(findMaxDistance(x, r) < findMaxDistance(greatest, r)) {
-          findGreatestDistanceToRangeHelper(xs, r, x)
+        case x :: xs => if(findMinDistance(x, r) < findMinDistance(greatest, r)) {
+          findCheapestDistanceToRangeHelper(xs, r, x)
         } else {
-          findGreatestDistanceToRangeHelper(xs, r, greatest)
+          findCheapestDistanceToRangeHelper(xs, r, greatest)
         }
-        case Nil => Transmitter(greatest.id, greatest.location, greatest.power + findMaxDistance(greatest, r))
+        case Nil => Transmitter(greatest.id, greatest.location, greatest.power + findMinDistance(greatest, r))
       }
-    findGreatestDistanceToRangeHelper(transmitters, outOfRange, transmitters(0))
+    findCheapestDistanceToRangeHelper(transmitters, outOfRange, transmitters(0))
   }
 
-  def findMaxDistance(t: Transmitter, r: List[Receiver]) = {
+  def findMinDistance(t: Transmitter, r: List[Receiver]) = {
     r.map(r => distanceToRange(t, r)).max
   }
 
-  def findGreatestDistanceToRange1(transmitters: List[Transmitter], u: List[Transmitter]): List[Transmitter] = {
-    def findGreatestDistanceToRangeHelper1(t: List[Transmitter], r: List[Transmitter], greatest: List[Transmitter]): List[Transmitter] =
-      t match {
-        case x :: xs => if(r.map(_.id).contains(x.id)) {
-          findGreatestDistanceToRangeHelper1(xs, r, x :: greatest)
-        } else {
-          findGreatestDistanceToRangeHelper1(xs, r, greatest)
-        }
-        case Nil => greatest
-      }
-    findGreatestDistanceToRangeHelper1(transmitters, u, transmitters)
+  def rangeCheck(transmitter: Transmitter, outOfRange: List[Receiver]): Boolean = {
+    if(getOutOfRangeReceivers(List(transmitter), outOfRange).isEmpty) true
+    else false
   }
 }
